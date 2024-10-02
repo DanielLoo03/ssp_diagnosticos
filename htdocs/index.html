@@ -65,17 +65,16 @@
 
         function seleccionarTipoDeGrafica(){
             if(graficaUnaVariable){
-                graficarUnaVariable();
+                graficarCategorico();
             }
             else{
                 if(document.getElementById("radioCategoricoNumerico").checked){
-                    graficarBivariable();
+                    graficarCategoricoNumerico();
                 }
                 else{
                     graficarCategoricoCategorico();
                 }
             }
-
         }
     </script>
 
@@ -156,48 +155,13 @@
         });
     </script>
 
-    <!--<script>
-        // Escuchamos el cambio en select1
-        document.getElementById('select1').addEventListener('change', function() {
-            // Obtenemos el valor seleccionado del primer select
-            const seleccion = this.value;
-
-            // Realizamos la solicitud AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'consultarOpciones.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    // Limpiamos el segundo select antes de llenarlo con los nuevos valores
-                    const select2 = document.getElementById('select2');
-                    select2.innerHTML = ''; // Limpiamos las opciones
-
-                    // Parseamos el resultado que llega como JSON
-                    const opciones = JSON.parse(xhr.responseText);
-
-                    // Iteramos sobre las opciones y las añadimos al segundo select
-                    opciones.forEach(function(opcion) {
-                        const nuevoOption = document.createElement('option');
-                        nuevoOption.value = opcion.value;
-                        nuevoOption.textContent = opcion.text;
-                        select2.appendChild(nuevoOption);
-                    });
-                }
-            };
-
-            // Enviamos la categoría seleccionada al servidor
-            xhr.send('categoria=' + seleccion);
-        });
-    </script>-->
-
     <script>
-        function graficarUnaVariable() {
+        function graficarCategorico() {
             // Obtener el valor seleccionado del select box
             const columnaSeleccionada = document.getElementById('select1').value;
 
             // Enviar la solicitud fetch al archivo PHP
-            fetch('extraccion.php', {
+            fetch('extraccionCategorico.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
@@ -233,14 +197,14 @@
     </script>
     
     <script>
-        function graficarBivariable(){
+        function graficarCategoricoNumerico(){
 
             const columnaCategoria = document.getElementById('select1').value;
             const columnaCategoriaParaValor = document.getElementById('select2').value;
             const columnaValor = document.getElementById('select3').value;
 
             // Enviar la solicitud fetch al archivo PHP
-            fetch('extraccionBivariable.php', {
+            fetch('extraccionCategoricoNumerico.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
