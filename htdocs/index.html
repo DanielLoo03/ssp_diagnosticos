@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba</title>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        #select1, #select2, #select3, #grupoCategoricoNumerico, #grupoCategoricoCategorico {
+          display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Graficas interactivas</h1>
+    <div id="grafica" style="height: 300px; max-width: 920px; margin: 60px auto;"></div>
+    <button onclick="seleccionarTipoDeGrafica()">Generar gráfica</button>
+    <button id="botonBarras" onclick="graficaUnaVariable = false;">
+        <img src="img/barChart.png" alt="Barras" width="50" height="50">
+    </button>
+    <button id="botonPie" onclick="graficaUnaVariable = true;">
+        <img src="img/pieChart.png" alt="Pie" width="50" height="50">
+    </button>
+    <select id="select1">
+        <option value="Edad">Edad</option>
+        <option value="Genero">Género</option>
+        <option value="Estado">Estado</option>
+        <option value="Institución">Institución</option>
+        <option value="Facultad">Facultad</option>
+        <option value="Padecimiento">Padecimiento</option>
+    </select>
+    <select id="select2", onchange="cargarOpciones()">
+        <option value="Edad">Edad</option>
+        <option value="Genero">Género</option>
+        <option value="Estado">Estado</option>
+        <option value="Institución">Institución</option>
+        <option value="Facultad">Facultad</option>
+        <option value="Padecimiento">Padecimiento</option>
+    </select>
+    <select id="select3">
+        
+    </select>
+
+    <button id="botonExportarPDF", onclick="exportarPDF()">
+        Exportar a PDF
+    </button>
+
+    <div class="radio-group" id="grupoCategoricoNumerico">
+        <label for="radioCategoricoNumerico">
+            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoNumerico" id="radioCategoricoNumerico" checked>
+            Categorico-Numerico
+        </label>
+    </div>
+    <div class="radio-group" id="grupoCategoricoCategorico">
+        <label for="radioCategoricoCategorico">
+            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoCategorico" id="radioCategoricoCategorico">
+            Categorico-Categorico
+        </label>
+    </div>
+
+    <script>
+        var graficaUnaVariable = true;
+
+        function seleccionarTipoDeGrafica(){
+            if(graficaUnaVariable){
+                graficarUnaVariable();
+            }
+            else{
+                if(document.getElementById("radioCategoricoNumerico").checked){
+                    graficarBivariable();
+                }
+                else{
+                    graficarCategoricoCategorico();
+                }
+            }
+
+        }
+    </script>
+
+    <script>
+        function cargarOpciones() {
+        const categoria = document.getElementById("select2").value;
+        const opcionesSelect = document.getElementById("select3");
+
+        if (categoria) {
+            fetch("consultarOpciones.php?categoria=" + categoria)
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiamos el segundo select
+                    opcionesSelect.innerHTML = '<option value=""></option>';
+                    // Agregamos las nuevas opciones
+                    data.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item;
+                        option.textContent = item;
+                        opcionesSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        } else {
+            // Si no se selecciona nada, limpiamos el segundo select
+            opcionesSelect.innerHTML = '<option value="">Selecciona una opción</option>';
+        }
+    }
+    </script>
+
+    <script>
+        function exportarPDF() {
+            var grafica = document.getElementById('grafica');
+            
+            var opciones = {
+                margin:       0,
+                filename:     'grafica.pdf',
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 4 }, 
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().from(grafica).set(opciones).save();
+        }
+    </script>
+
+    <script>
+        document.getElementById("botonBarras").addEventListener("click", function() {
+            if (document.getElementById("radioCategoricoNumerico").checked) {
+                document.getElementById("select1").style.display = "block";
+                document.getElementById("select2").style.display = "block";
+                document.getElementById("select3").style.display = "block";
+            }
+            else{
+                document.getElementById("select1").style.display = "block";
+                document.getElementById("select2").style.display = "block";
+                document.getElementById("select3").style.display = "none";
+            }
+            document.getElementById("grupoCategoricoNumerico").style.display = "block";
+            document.getElementById("grupoCategoricoCategorico").style.display = "block";
+        });
+        document.getElementById("botonPie").addEventListener("click", function() {
+            document.getElementById("select1").style.display = "block";
+            document.getElementById("select2").style.display = "none";
+            document.getElementById("select3").style.display = "none";
+            document.getElementById("grupoCategoricoNumerico").style.display = "none";
+            document.getElementById("grupoCategoricoCategorico").style.display = "none";
+        });
+        document.getElementById("radioCategoricoNumerico").addEventListener("change", function() {
+            document.getElementById("select1").style.display = "block";
+            document.getElementById("select2").style.display = "block";
+            document.getElementById("select3").style.display = "block";
+        });
+        document.getElementById("radioCategoricoCategorico").addEventListener("change", function() {
+            document.getElementById("select1").style.display = "block";
+            document.getElementById("select2").style.display = "block";
+            document.getElementById("select3").style.display = "none";
+        });
+    </script>
+
+    <!--<script>
+        // Escuchamos el cambio en select1
+        document.getElementById('select1').addEventListener('change', function() {
+            // Obtenemos el valor seleccionado del primer select
+            const seleccion = this.value;
+
+            // Realizamos la solicitud AJAX
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'consultarOpciones.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Limpiamos el segundo select antes de llenarlo con los nuevos valores
+                    const select2 = document.getElementById('select2');
+                    select2.innerHTML = ''; // Limpiamos las opciones
+
+                    // Parseamos el resultado que llega como JSON
+                    const opciones = JSON.parse(xhr.responseText);
+
+                    // Iteramos sobre las opciones y las añadimos al segundo select
+                    opciones.forEach(function(opcion) {
+                        const nuevoOption = document.createElement('option');
+                        nuevoOption.value = opcion.value;
+                        nuevoOption.textContent = opcion.text;
+                        select2.appendChild(nuevoOption);
+                    });
+                }
+            };
+
+            // Enviamos la categoría seleccionada al servidor
+            xhr.send('categoria=' + seleccion);
+        });
+    </script>-->
+
+    <script>
+        function graficarUnaVariable() {
+            // Obtener el valor seleccionado del select box
+            const columnaSeleccionada = document.getElementById('select1').value;
+
+            // Enviar la solicitud fetch al archivo PHP
+            fetch('extraccion.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                },
+                body: new URLSearchParams({
+                    'columna': columnaSeleccionada
+                })
+            })
+            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(data => {
+                console.log(data); // Maneja la respuesta aquí
+                var grafica = new CanvasJS.Chart("grafica", {
+                        animationEnabled: true,
+                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        title:{
+                            text: "Alumnos por " + columnaSeleccionada,
+                            fontFamily: "Lucida Console",
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            margin: 40
+                        },
+                        data: [{        
+                            type: "pie", 
+                            indexLabel: "{label} {y}%",
+                            toolTipContent: "<b>{label}</b>: {y}%",
+                            dataPoints: data
+                        }]
+                    });
+                    grafica.render();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+    
+    <script>
+        function graficarBivariable(){
+
+            const columnaCategoria = document.getElementById('select1').value;
+            const columnaCategoriaParaValor = document.getElementById('select2').value;
+            const columnaValor = document.getElementById('select3').value;
+
+            // Enviar la solicitud fetch al archivo PHP
+            fetch('extraccionBivariable.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                },
+                body: new URLSearchParams({
+                    'columnaCategoria': columnaCategoria,
+                    'columnaCategoriaParaValor': columnaCategoriaParaValor,
+                    'columnaValor': columnaValor
+                })
+            })
+            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(data => {
+                console.log(data);
+                const datosLimpios = data.map(item => ({
+                    label: item.label,
+                    y: parseInt(item.y, 10)
+                }));
+                var graficaBarras = new CanvasJS.Chart("grafica", {
+                        animationEnabled: true,
+                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        title:{
+                            text: "Alumnos " + columnaValor + " por " + columnaCategoria,
+                            fontFamily: "Lucida Console",
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            margin: 40
+                        },
+                        data: [{        
+                            type: "bar", 
+                            dataPoints: datosLimpios,
+                        }]
+                    });
+                    graficaBarras.render();
+            })
+            .catch(error => console.error('Error:', error));
+
+        }
+    </script> 
+    
+    <script>
+        function graficarCategoricoCategorico(){
+
+            const columnaCategoria1 = document.getElementById('select1').value;
+            const columnaCategoria2 = document.getElementById('select2').value;
+
+            // Enviar la solicitud fetch al archivo PHP
+            fetch('extraccionCategoricoCategorico.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                },
+                body: new URLSearchParams({
+                    'columnaCategoria1': columnaCategoria1,
+                    'columnaCategoria2': columnaCategoria2,
+                })
+            })
+            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(data => {
+                console.log(data);
+                const datosLimpios = data.map(item => ({
+                    label: item.label,
+                    y: parseInt(item.y, 10)
+                }));
+                var graficaBarras = new CanvasJS.Chart("grafica", {
+                        animationEnabled: true,
+                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        title:{
+                            text: "Alumnos por " + columnaCategoria1 + " y " + columnaCategoria2,
+                            fontFamily: "Lucida Console",
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            margin: 40
+                        },
+                        data: [{        
+                            type: "bar", 
+                            dataPoints: datosLimpios,
+                        }]
+                    });
+                    graficaBarras.render();
+            })
+            .catch(error => console.error('Error:', error));
+
+        }
+    </script>
+</body>
+</html>

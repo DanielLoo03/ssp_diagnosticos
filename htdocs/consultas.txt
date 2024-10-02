@@ -1,0 +1,2 @@
+INSERT INTO info (Nombre, Edad, Estado, Institución, Facultad, Padecimiento) VALUES 
+();

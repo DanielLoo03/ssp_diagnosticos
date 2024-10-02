@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>  
+<script>
+window.onload = function () {
+
+var chartColumns = new CanvasJS.Chart("chartContainer1", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Alumnos por facultad"
+	},
+	data: [{        
+		type: "column",   
+		dataPoints: [      
+			{ y: 30, label: "Artes" },
+			{ y: 27,  label: "Arquitectura" },
+			{ y: 45,  label: "Ingenieria" },
+			{ y: 10,  label: "Medicina" },
+			{ y: 56,  label: "Derecho" }
+		]
+	}]
+});
+chartColumns.render();
+
+var chartPie = new CanvasJS.Chart("chartContainer2", {
+	animationEnabled: true,
+	theme: "light1", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Alumnos por estado",
+		fontFamily: "Lucida Console",
+		fontSize: 20,
+		fontWeight: "bold",
+		margin: 40
+	},
+	axisY: {
+		title: ""
+	},
+	data: [{        
+		type: "pie",   
+		dataPoints: [      
+			{ y: 125, label: "CDMX" },
+			{ y: 88,  label: "Baja California" },
+			{ y: 47,  label: "Coahuila" },
+			{ y: 75,  label: "Nuevo Leon" },
+			{ y: 24,  label: "Veracruz" }
+		]
+	}]
+});
+chartPie.render();
+
+var chart = new CanvasJS.Chart("chartContainer3", {
+	animationEnabled: true,
+	theme: "dark2",
+	title:{
+		text: "Alumnos encuestados por dia"
+	},
+	axisX: {
+        minimum: 1,  
+    },
+	data: [{        
+		type: "line",
+		lineThickness: "2",
+      	indexLabelFontSize: 14,
+		dataPoints: [
+			{ y: 450 },
+			{ y: 414},
+			{ y: 520, indexLabel: "\u2191 Maxima cantidad de encuestados",markerColor: "red", markerType: "cross", indexLabelFontSize: 12},
+			{ y: 460 },
+			{ y: 450 },
+			{ y: 500 },
+			{ y: 480 },
+			{ y: 480 },
+			{ y: 410 , indexLabel: "\u2193 Menor cantidad de encuestados",markerColor: "blue", markerType: "cross", indexLabelFontSize: 12},
+			{ y: 500 },
+			{ y: 480 },
+			{ y: 510 },
+			{ y: 440 }
+		]
+	}]
+});
+chart.render();
+
+var chartBoxplot = new CanvasJS.Chart("chartContainer4", {
+	animationEnabled: true,
+	theme: "dark1", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Edades de alumnos por facultades",
+		fontFamily: "Times New Roman",
+		fontSize: 18,
+		margin: 25
+	},
+	axisY: {
+		title: "Edades"
+	},
+	data: [{        
+		type: "boxAndWhisker",   
+		dataPoints: [      
+			{ label: "Ingenieria", y: [18, 19, 22, 24, 25]}, //minimo, primer cuartil, mediana, tercer cuartil, maximo  
+			{ label: "Medicina", y: [20, 21, 22, 18, 19]},
+			{ label: "Arquitectura", y: [19, 20, 21, 22, 23]},
+			{ label: "Derecho", y: [18, 20, 19, 22, 21]},
+			{ label: "Ciencias Administrativas", y: [21, 22, 20, 19, 18]}
+		]
+	}]
+});
+chartBoxplot.render();
+
+}
+</script>
+</head>
+<body>
+<div id="chartContainer1" style="height: 300px; max-width: 920px; margin: 0px auto;"></div>
+<div id="chartContainer2" style="height: 300px; max-width: 920px; margin: 0px auto;"></div>
+<div id="chartContainer3" style="height: 300px; max-width: 920px; margin: 0px auto;"></div>
+<div id="chartContainer4" style="height: 300px; max-width: 920px; margin: 0px auto;"></div>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+</body>
+</html>
