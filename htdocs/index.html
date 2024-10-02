@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     
     <style>
-        #select1, #select2, #select3, #grupoCategoricoNumerico, #grupoCategoricoCategorico {
+        #selectCategoria, #selectCategoria2, #selectValor, #grupoCategoricoNumerico, #grupoCategoricoCategorico {
           display: none;
         }
     </style>
@@ -16,6 +16,7 @@
 <body>
     <h1 style="text-align: center;">Graficas interactivas</h1>
     <div id="grafica" style="height: 300px; max-width: 920px; margin: 60px auto;"></div>
+
     <button onclick="seleccionarTipoDeGrafica()">Generar gráfica</button>
     <button id="botonBarras" onclick="graficaUnaVariable = false;">
         <img src="img/barChart.png" alt="Barras" width="50" height="50">
@@ -23,29 +24,29 @@
     <button id="botonPie" onclick="graficaUnaVariable = true;">
         <img src="img/pieChart.png" alt="Pie" width="50" height="50">
     </button>
-    <select id="select1">
-        <option value="Edad">Edad</option>
-        <option value="Genero">Género</option>
-        <option value="Estado">Estado</option>
-        <option value="Institución">Institución</option>
-        <option value="Facultad">Facultad</option>
-        <option value="Padecimiento">Padecimiento</option>
-    </select>
-    <select id="select2", onchange="cargarOpciones()">
-        <option value="Edad">Edad</option>
-        <option value="Genero">Género</option>
-        <option value="Estado">Estado</option>
-        <option value="Institución">Institución</option>
-        <option value="Facultad">Facultad</option>
-        <option value="Padecimiento">Padecimiento</option>
-    </select>
-    <select id="select3">
-        
-    </select>
-
-    <button id="botonExportarPDF", onclick="exportarPDF()">
+    <button id="botonExportarPDF", onclick="exportarPDF()"></button>
         Exportar a PDF
     </button>
+
+    <select id="selectCategoria1">
+        <option value="Edad">Edad</option>
+        <option value="Genero">Género</option>
+        <option value="Estado">Estado</option>
+        <option value="Institución">Institución</option>
+        <option value="Facultad">Facultad</option>
+        <option value="Padecimiento">Padecimiento</option>
+    </select>
+    <select id="selectCategoria2", onchange="cargarOpciones()">
+        <option value="Edad">Edad</option>
+        <option value="Genero">Género</option>
+        <option value="Estado">Estado</option>
+        <option value="Institución">Institución</option>
+        <option value="Facultad">Facultad</option>
+        <option value="Padecimiento">Padecimiento</option>
+    </select>
+    <select id="selectValor">
+        <!-- Se llena segun lo elegido en selectCategoria2 -->
+    </select>
 
     <div class="radio-group" id="grupoCategoricoNumerico">
         <label for="radioCategoricoNumerico">
@@ -80,8 +81,8 @@
 
     <script>
         function cargarOpciones() {
-        const categoria = document.getElementById("select2").value;
-        const opcionesSelect = document.getElementById("select3");
+        const categoria = document.getElementById("selectCategoria2").value;
+        const opcionesSelect = document.getElementById("selectValor");
 
         if (categoria) {
             fetch("consultarOpciones.php?categoria=" + categoria)
@@ -121,61 +122,62 @@
         }
     </script>
 
+    <!-- Pendiente: refactorizar codigo-->
     <script>
         document.getElementById("botonBarras").addEventListener("click", function() {
             if (document.getElementById("radioCategoricoNumerico").checked) {
-                document.getElementById("select1").style.display = "block";
-                document.getElementById("select2").style.display = "block";
-                document.getElementById("select3").style.display = "block";
+                document.getElementById("selectCategoria").style.display = "block";
+                document.getElementById("selectCategoria2").style.display = "block";
+                document.getElementById("selectValor").style.display = "block";
             }
             else{
-                document.getElementById("select1").style.display = "block";
-                document.getElementById("select2").style.display = "block";
-                document.getElementById("select3").style.display = "none";
+                document.getElementById("selectCategoria").style.display = "block";
+                document.getElementById("selectCategoria2").style.display = "block";
+                document.getElementById("selectValor").style.display = "none";
             }
             document.getElementById("grupoCategoricoNumerico").style.display = "block";
             document.getElementById("grupoCategoricoCategorico").style.display = "block";
         });
         document.getElementById("botonPie").addEventListener("click", function() {
-            document.getElementById("select1").style.display = "block";
-            document.getElementById("select2").style.display = "none";
-            document.getElementById("select3").style.display = "none";
+            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria2").style.display = "none";
+            document.getElementById("selectValor").style.display = "none";
             document.getElementById("grupoCategoricoNumerico").style.display = "none";
             document.getElementById("grupoCategoricoCategorico").style.display = "none";
         });
         document.getElementById("radioCategoricoNumerico").addEventListener("change", function() {
-            document.getElementById("select1").style.display = "block";
-            document.getElementById("select2").style.display = "block";
-            document.getElementById("select3").style.display = "block";
+            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria2").style.display = "block";
+            document.getElementById("selectValor").style.display = "block";
         });
         document.getElementById("radioCategoricoCategorico").addEventListener("change", function() {
-            document.getElementById("select1").style.display = "block";
-            document.getElementById("select2").style.display = "block";
-            document.getElementById("select3").style.display = "none";
+            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria2").style.display = "block";
+            document.getElementById("selectValor").style.display = "none";
         });
     </script>
 
     <script>
         function graficarCategorico() {
             // Obtener el valor seleccionado del select box
-            const columnaSeleccionada = document.getElementById('select1').value;
+            const columnaSeleccionada = document.getElementById('selectCategoria').value;
 
             // Enviar la solicitud fetch al archivo PHP
             fetch('extraccionCategorico.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                    'Content-Type': 'application/x-www-form-urlencoded', 
                 },
                 body: new URLSearchParams({
                     'columna': columnaSeleccionada
                 })
             })
-            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(response => response.json()) // `extraccion.php` devuelve JSON
             .then(data => {
                 console.log(data); // Maneja la respuesta aquí
                 var grafica = new CanvasJS.Chart("grafica", {
                         animationEnabled: true,
-                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        theme: "light1", 
                         title:{
                             text: "Alumnos por " + columnaSeleccionada,
                             fontFamily: "Lucida Console",
@@ -199,15 +201,14 @@
     <script>
         function graficarCategoricoNumerico(){
 
-            const columnaCategoria = document.getElementById('select1').value;
-            const columnaCategoriaParaValor = document.getElementById('select2').value;
-            const columnaValor = document.getElementById('select3').value;
+            const columnaCategoria = document.getElementById('selectCategoria').value;
+            const columnaCategoriaParaValor = document.getElementById('selectCategoria2').value;
+            const columnaValor = document.getElementById('selectValor').value;
 
-            // Enviar la solicitud fetch al archivo PHP
             fetch('extraccionCategoricoNumerico.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
                     'columnaCategoria': columnaCategoria,
@@ -215,7 +216,7 @@
                     'columnaValor': columnaValor
                 })
             })
-            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(response => response.json()) 
             .then(data => {
                 console.log(data);
                 const datosLimpios = data.map(item => ({
@@ -224,7 +225,7 @@
                 }));
                 var graficaBarras = new CanvasJS.Chart("grafica", {
                         animationEnabled: true,
-                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        theme: "light1", 
                         title:{
                             text: "Alumnos " + columnaValor + " por " + columnaCategoria,
                             fontFamily: "Lucida Console",
@@ -247,21 +248,20 @@
     <script>
         function graficarCategoricoCategorico(){
 
-            const columnaCategoria1 = document.getElementById('select1').value;
-            const columnaCategoria2 = document.getElementById('select2').value;
+            const columnaCategoria1 = document.getElementById('selectCategoria').value;
+            const columnaCategoria2 = document.getElementById('selectCategoria2').value;
 
-            // Enviar la solicitud fetch al archivo PHP
             fetch('extraccionCategoricoCategorico.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', // Asegúrate de enviar datos correctamente formateados
+                    'Content-Type': 'application/x-www-form-urlencoded', 
                 },
                 body: new URLSearchParams({
                     'columnaCategoria1': columnaCategoria1,
                     'columnaCategoria2': columnaCategoria2,
                 })
             })
-            .then(response => response.json()) // Suponiendo que `extraccion.php` devuelve JSON
+            .then(response => response.json()) 
             .then(data => {
                 console.log(data);
                 const datosLimpios = data.map(item => ({
@@ -270,7 +270,7 @@
                 }));
                 var graficaBarras = new CanvasJS.Chart("grafica", {
                         animationEnabled: true,
-                        theme: "light1", // "light1", "light2", "dark1", "dark2"
+                        theme: "light1", 
                         title:{
                             text: "Alumnos por " + columnaCategoria1 + " y " + columnaCategoria2,
                             fontFamily: "Lucida Console",
