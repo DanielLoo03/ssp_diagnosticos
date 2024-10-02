@@ -126,12 +126,12 @@
     <script>
         document.getElementById("botonBarras").addEventListener("click", function() {
             if (document.getElementById("radioCategoricoNumerico").checked) {
-                document.getElementById("selectCategoria").style.display = "block";
+                document.getElementById("selectCategoria1").style.display = "block";
                 document.getElementById("selectCategoria2").style.display = "block";
                 document.getElementById("selectValor").style.display = "block";
             }
             else{
-                document.getElementById("selectCategoria").style.display = "block";
+                document.getElementById("selectCategoria1").style.display = "block";
                 document.getElementById("selectCategoria2").style.display = "block";
                 document.getElementById("selectValor").style.display = "none";
             }
@@ -139,19 +139,19 @@
             document.getElementById("grupoCategoricoCategorico").style.display = "block";
         });
         document.getElementById("botonPie").addEventListener("click", function() {
-            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria1").style.display = "block";
             document.getElementById("selectCategoria2").style.display = "none";
             document.getElementById("selectValor").style.display = "none";
             document.getElementById("grupoCategoricoNumerico").style.display = "none";
             document.getElementById("grupoCategoricoCategorico").style.display = "none";
         });
         document.getElementById("radioCategoricoNumerico").addEventListener("change", function() {
-            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria1").style.display = "block";
             document.getElementById("selectCategoria2").style.display = "block";
             document.getElementById("selectValor").style.display = "block";
         });
         document.getElementById("radioCategoricoCategorico").addEventListener("change", function() {
-            document.getElementById("selectCategoria").style.display = "block";
+            document.getElementById("selectCategoria1").style.display = "block";
             document.getElementById("selectCategoria2").style.display = "block";
             document.getElementById("selectValor").style.display = "none";
         });
@@ -160,7 +160,7 @@
     <script>
         function graficarCategorico() {
             // Obtener el valor seleccionado del select box
-            const columnaSeleccionada = document.getElementById('selectCategoria').value;
+            const columnaSeleccionada = document.getElementById('selectCategoria1').value;
 
             // Enviar la solicitud fetch al archivo PHP
             fetch('extraccionCategorico.php', {
@@ -201,7 +201,7 @@
     <script>
         function graficarCategoricoNumerico(){
 
-            const columnaCategoria = document.getElementById('selectCategoria').value;
+            const columnaCategoria = document.getElementById('selectCategoria1').value;
             const columnaCategoriaParaValor = document.getElementById('selectCategoria2').value;
             const columnaValor = document.getElementById('selectValor').value;
 
@@ -248,7 +248,7 @@
     <script>
         function graficarCategoricoCategorico(){
 
-            const columnaCategoria1 = document.getElementById('selectCategoria').value;
+            const columnaCategoria1 = document.getElementById('selectCategoria1').value;
             const columnaCategoria2 = document.getElementById('selectCategoria2').value;
 
             fetch('extraccionCategoricoCategorico.php', {
