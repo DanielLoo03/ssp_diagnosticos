@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     
     <style>
-        #selectCategoria, #selectCategoria2, #selectValor, #grupoCategoricoNumerico, #grupoCategoricoCategorico {
+        #selectCategoria1, #selectCategoria2, #selectValor, #grupoCategoricoNumerico, #grupoCategoricoCategorico, #grupoCategorico {
           display: none;
         }
     </style>
@@ -18,10 +18,10 @@
     <div id="grafica" style="height: 300px; max-width: 920px; margin: 60px auto;"></div>
 
     <button onclick="seleccionarTipoDeGrafica()">Generar gráfica</button>
-    <button id="botonBarras" onclick="graficaUnaVariable = false;">
+    <button id="botonBarras", onclick = "tipoDeGrafica = 'barras'; tipoDeVariables = 'categorico'">
         <img src="img/barChart.png" alt="Barras" width="50" height="50">
     </button>
-    <button id="botonPie" onclick="graficaUnaVariable = true;">
+    <button id="botonPie", onclick = "tipoDeGrafica = 'pie'; tipoDeVariables = 'categorico'">
         <img src="img/pieChart.png" alt="Pie" width="50" height="50">
     </button>
     <button id="botonExportarPDF", onclick="exportarPDF()">
@@ -48,34 +48,57 @@
         <!-- Se llena segun lo elegido en selectCategoria2 -->
     </select>
 
+    <div class="radio-group" id="grupoCategorico">
+        <label for="radioCategorico">
+            <input type="radio" name="seleccionTipoDeGrafica" value="categorico" id="radioCategorico" onclick = "tipoDeVariables = 'categorico'" checked>
+            Categorico
+        </label>
+    </div>
     <div class="radio-group" id="grupoCategoricoNumerico">
         <label for="radioCategoricoNumerico">
-            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoNumerico" id="radioCategoricoNumerico" checked>
+            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoNumerico" id="radioCategoricoNumerico" onclick = "tipoDeVariables = 'categorico-numerico'">
             Categorico-Numerico
         </label>
     </div>
     <div class="radio-group" id="grupoCategoricoCategorico">
         <label for="radioCategoricoCategorico">
-            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoCategorico" id="radioCategoricoCategorico">
+            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoCategorico" id="radioCategoricoCategorico" onclick = "tipoDeVariables = 'categorico-categorico'">
             Categorico-Categorico
         </label>
     </div>
 
     <script>
-        var graficaUnaVariable = true;
+        var tipoDeGrafica = "";
+        var tipoDeVariables = "";
 
         function seleccionarTipoDeGrafica(){
-            if(graficaUnaVariable){
-                graficarCategorico();
+
+            switch(tipoDeGrafica){
+
+                case "pie":
+                    graficarCategorico("pie");
+                    break;
+
+                case "barras":
+                    switch(tipoDeVariables){
+                        case "categorico":
+                            graficarCategorico("bar");
+                            break;
+
+                        case "categorico-numerico":
+                            graficarCategoricoNumerico("bar");
+                            break;
+
+                        default:
+                            console.log("Error, tipoDeVariables no valido: " + tipoDeVariables + "\ntipoDeGrafica seleccionado (si valido): " + tipoDeGrafica);
+                    }
+                    break;
+
+                default:
+                    console.log("Error, tipoDeGrafica no valida: " + tipoDeGrafica)
+
             }
-            else{
-                if(document.getElementById("radioCategoricoNumerico").checked){
-                    graficarCategoricoNumerico();
-                }
-                else{
-                    graficarCategoricoCategorico();
-                }
-            }
+
         }
     </script>
 
@@ -125,16 +148,22 @@
     <!-- Pendiente: refactorizar codigo-->
     <script>
         document.getElementById("botonBarras").addEventListener("click", function() {
-            if (document.getElementById("radioCategoricoNumerico").checked) {
+            if (document.getElementById("radioCategorico").checked){
                 document.getElementById("selectCategoria1").style.display = "block";
-                document.getElementById("selectCategoria2").style.display = "block";
-                document.getElementById("selectValor").style.display = "block";
+                document.getElementById("selectCategoria2").style.display = "none";
+                document.getElementById("selectValor").style.display = "none";
             }
-            else{
+            else if (document.getElementById("radioCategoricoCategorico").checked) {
                 document.getElementById("selectCategoria1").style.display = "block";
                 document.getElementById("selectCategoria2").style.display = "block";
                 document.getElementById("selectValor").style.display = "none";
             }
+            else{
+                document.getElementById("selectCategoria1").style.display = "block";
+                document.getElementById("selectCategoria2").style.display = "block";
+                document.getElementById("selectValor").style.display = "block";
+            }
+            document.getElementById("grupoCategorico").style.display = "block";
             document.getElementById("grupoCategoricoNumerico").style.display = "block";
             document.getElementById("grupoCategoricoCategorico").style.display = "block";
         });
@@ -142,6 +171,7 @@
             document.getElementById("selectCategoria1").style.display = "block";
             document.getElementById("selectCategoria2").style.display = "none";
             document.getElementById("selectValor").style.display = "none";
+            document.getElementById("grupoCategorico").style.display = "none";
             document.getElementById("grupoCategoricoNumerico").style.display = "none";
             document.getElementById("grupoCategoricoCategorico").style.display = "none";
         });
@@ -158,7 +188,7 @@
     </script>
 
     <script>
-        function graficarCategorico() {
+        function graficarCategorico(tipoDeGraficaSeleccionada) {
             // Obtener el valor seleccionado del select box
             const columnaSeleccionada = document.getElementById('selectCategoria1').value;
 
@@ -174,7 +204,11 @@
             })
             .then(response => response.json()) // `extraccion.php` devuelve JSON
             .then(data => {
-                console.log(data); // Maneja la respuesta aquí
+                console.log(data); 
+                const datosLimpios = data.map(item => ({
+                    label: item.label,
+                    y: parseInt(item.y, 10)
+                }));
                 var grafica = new CanvasJS.Chart("grafica", {
                         animationEnabled: true,
                         theme: "light1", 
@@ -186,10 +220,10 @@
                             margin: 40
                         },
                         data: [{        
-                            type: "pie", 
+                            type: tipoDeGraficaSeleccionada, 
                             indexLabel: "{label} {y}%",
                             toolTipContent: "<b>{label}</b>: {y}%",
-                            dataPoints: data
+                            dataPoints: datosLimpios
                         }]
                     });
                     grafica.render();
@@ -199,7 +233,7 @@
     </script>
     
     <script>
-        function graficarCategoricoNumerico(){
+        function graficarCategoricoNumerico(tipoDeGraficaSeleccionada){
 
             const columnaCategoria = document.getElementById('selectCategoria1').value;
             const columnaCategoriaParaValor = document.getElementById('selectCategoria2').value;
@@ -234,7 +268,7 @@
                             margin: 40
                         },
                         data: [{        
-                            type: "bar", 
+                            type: tipoDeGraficaSeleccionada, 
                             dataPoints: datosLimpios,
                         }]
                     });
