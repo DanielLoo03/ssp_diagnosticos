@@ -3,325 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba</title>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-    
-    <style>
-        #selectCategoria1, #selectCategoria2, #selectValor, #grupoCategoricoNumerico, #grupoCategoricoCategorico, #grupoCategorico {
-          display: none;
-        }
-    </style>
+    <title>Prueba Tabler</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/apexcharts/dist/apexcharts.min.js" defer></script>
 </head>
 <body>
-    <h1 style="text-align: center;">Graficas interactivas</h1>
-    <div id="grafica" style="height: 300px; max-width: 920px; margin: 60px auto;"></div>
-
-    <button onclick="seleccionarTipoDeGrafica()">Generar gráfica</button>
-    <button id="botonBarras", onclick = "tipoDeGrafica = 'barras'; tipoDeVariables = 'categorico'">
-        <img src="img/barChart.png" alt="Barras" width="50" height="50">
-    </button>
-    <button id="botonPie", onclick = "tipoDeGrafica = 'pie'; tipoDeVariables = 'categorico'">
-        <img src="img/pieChart.png" alt="Pie" width="50" height="50">
-    </button>
-    <button id="botonExportarPDF", onclick="exportarPDF()">
-        Exportar a PDF
-    </button>
-
-    <select id="selectCategoria1">
-        <option value="Edad">Edad</option>
-        <option value="Genero">Género</option>
-        <option value="Estado">Estado</option>
-        <option value="Institución">Institución</option>
-        <option value="Facultad">Facultad</option>
-        <option value="Padecimiento">Padecimiento</option>
-    </select>
-    <select id="selectCategoria2", onchange="cargarOpciones()">
-        <option value="Edad">Edad</option>
-        <option value="Genero">Género</option>
-        <option value="Estado">Estado</option>
-        <option value="Institución">Institución</option>
-        <option value="Facultad">Facultad</option>
-        <option value="Padecimiento">Padecimiento</option>
-    </select>
-    <select id="selectValor">
-        <!-- Se llena segun lo elegido en selectCategoria2 -->
-    </select>
-
-    <div class="radio-group" id="grupoCategorico">
-        <label for="radioCategorico">
-            <input type="radio" name="seleccionTipoDeGrafica" value="categorico" id="radioCategorico" onclick = "tipoDeVariables = 'categorico'" checked>
-            Categorico
-        </label>
+    <!-- Contenedores -->
+    <div class="page">
+        <header class="navbar navbar-expand-sm navbar-light d-print-none">
+            <div class="container-xl">
+              <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                <a href="#" style="display: flex; align-items: center;">
+                    <img src="http://localhost/img/logoUABC.webp" width="110" height="32" alt="[logo]" class="navbar-brand-image" />
+                    <p style="margin: 12px; font-size: 18px;">Universidad Autónoma de Baja California</p>
+                </a>                  
+              </h1>
+        
+              <div class="navbar-nav flex-row order-md-last">
+                <div class="nav-item">
+                  <a href="#" class="nav-link d-flex lh-1 text-reset p-0"></a>
+                </div>
+              </div>
+            </div>
+          </header>
+        <div class="page-wrapper">
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-deck row-cards">
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-body" style="height: 20rem">
+                                    <div id="grafica-barras" class="chart-lg">
+                                        <p style="text-align: center; font-size: 15px;">Padecimientos de alumnos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-body" style="height: 20rem">
+                                    <div id="grafica-pie" class="chart-lg">
+                                        <p id="titulo-grafica-pie" style="text-align: center; font-size: 15px;">Alumnos por Facultad</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="selectbox-pie"></label>
+                                        <select class="form-select" id="selectbox-pie">
+                                            <option value="Edad">Edad</option>
+                                            <option value="Estado">Estado</option>
+                                            <option selected value="Facultad">Facultad</option>
+                                            <option value="Genero">Genero</option>
+                                            <option value="Institución">Institución</option>
+                                            <option value="Padecimiento">Padecimiento</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="height: 20rem">
+                                    <div id="grafica-boxplot" class="chart-lg">
+                                        <p style="text-align: center; font-size: 15px;">Box Plot</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="card">
+                                <div class="card-body" style="height: 20rem">
+                                    <div id="grafica-tendencias" class="chart-lg">
+                                        <p style="text-align: center; font-size: 15px;">Line Chart</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="radio-group" id="grupoCategoricoNumerico">
-        <label for="radioCategoricoNumerico">
-            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoNumerico" id="radioCategoricoNumerico" onclick = "tipoDeVariables = 'categorico-numerico'">
-            Categorico-Numerico
-        </label>
-    </div>
-    <div class="radio-group" id="grupoCategoricoCategorico">
-        <label for="radioCategoricoCategorico">
-            <input type="radio" name="seleccionTipoDeGrafica" value="categoricoCategorico" id="radioCategoricoCategorico" onclick = "tipoDeVariables = 'categorico-categorico'">
-            Categorico-Categorico
-        </label>
-    </div>
 
+    <!-- Renderizado de graficas -->
     <script>
-        var tipoDeGrafica = "";
-        var tipoDeVariables = "";
+        // Graficas predeterminadas
+        // Grafica de barras predeterminada (no parametrizable)
+        document.addEventListener("DOMContentLoaded", function() {
+        window.ApexCharts && fetch('consultasEstaticas.php')
+            .then(response => response.json())
+            .then(datos => {
+                const datosLimpios = datos.map(item => ({
+                x: String(item.Padecimiento),
+                y: parseInt(item.y, 10)
+                }));
+                let graficaBarras = new ApexCharts(document.getElementById('grafica-barras'), {
+                    chart: {
+                        type: "bar",
+                        fontFamily: 'inherit',
+                        width: 450,
+                        height: 225,
+                        parentHeightOffset: 0,
+                        toolbar: {
+                            show: false,
+                        },
+                        animations: {
+                            enabled: true
+                        },
+                        stacked: true,
+                    },
+                    plotOptions: {
+                        bar: {
+                            barHeight: '50%',
+                            horizontal: true,
+                            
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    fill: {
+                        opacity: 1,
+                    },
+                    series: [{
+                        data: datosLimpios
+                    }],
+                    tooltip: {
+                        theme: 'dark'
+                    },
+                    grid: {
+                        padding: {
+                            top: 10,
+                            right: 0,
+                            left: 10,
+                            bottom: -4
+                        },
+                        strokeDashArray: 4,
+                    },
+                    xaxis: {
+                        type: 'category'
+                    },
+                    yaxis: {
+                        labels: {
+                            padding: 4
+                        },
+                    },
+                    colors: [
+                        tabler.getColor("purple"),
+                        tabler.getColor("green"),
+                        tabler.getColor("yellow"),
+                        tabler.getColor("red"),
+                        tabler.getColor("primary")
+                    ],
+                    legend: {
+                        show: true,
+                        position: 'bottom',
+                        offsetY: 12,
+                        markers: {
+                            width: 10,
+                            height: 10,
+                            radius: 100,
+                        },
+                        itemMargin: {
+                            horizontal: 8,
+                            vertical: 8
+                        },
+                    },
+                });
+    
+                graficaBarras.render();
+            })
+            .catch(error => console.error('Error:', error));
 
-        function seleccionarTipoDeGrafica(){
+            // Grafica de pie predeterminada (parametrizable)  
+            let graficaPie;
+            function graficarPie(categoria){
 
-            switch(tipoDeGrafica){
+                // Enviar la solicitud fetch al archivo PHP
+                fetch('extraccionCategorico.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', 
+                    },
+                    body: new URLSearchParams({
+                        'columna': categoria
+                    })
+                })
+                .then(response => response.json()) // `extraccion.php` devuelve JSON
+                .then(data => {
+                    console.log(data);
 
-                case "pie":
-                    graficarCategorico("pie");
-                    break;
+                    // Extraer etiquetas y series
+                    const etiquetas = data.map(item => String(item.x)); // Asumiendo que `item.x` es la etiqueta
+                    const frecuencias = data.map(item => parseInt(item.y, 10)); // Asumiendo que `item.y` es la frecuencia
 
-                case "barras":
-                    switch(tipoDeVariables){
-                        case "categorico":
-                            graficarCategorico("bar");
-                            break;
+                    var opciones = {
+                        chart: {
+                            type: "pie", // Debe ser 'pie' o 'donut' para gráficos de pastel
+                            width: 450,
+                            height: 225
+                        },
+                        labels: etiquetas, // Etiquetas del gráfico
+                        series: frecuencias, // Frecuencias del gráfico
+                    };
 
-                        case "categorico-numerico":
-                            graficarCategoricoNumerico("bar");
-                            break;
-
-                        default:
-                            console.log("Error, tipoDeVariables no valido: " + tipoDeVariables + "\ntipoDeGrafica seleccionado (si valido): " + tipoDeGrafica);
-                    }
-                    break;
-
-                default:
-                    console.log("Error, tipoDeGrafica no valida: " + tipoDeGrafica)
+                    graficaPie = new ApexCharts(document.querySelector("#grafica-pie"), opciones);
+                    graficaPie.render();
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
 
             }
+            graficarPie("Facultad");
 
-        }
+            // Event listener de grafica pie 
+            document.getElementById('selectbox-pie').addEventListener('change', function() {
+                const categoriaSeleccionada = this.value; // Obtiene el valor seleccionado
+
+                graficaPie.destroy();
+                //document.getElementById("titulo-grafica-pie").textContent = "Alumnos por " + categoriaSeleccionada;
+                graficarPie(categoriaSeleccionada)
+            });
+
+        });
     </script>
-
+        
+    <!-- Otras funciones -->    
     <script>
-        function cargarOpciones() {
-        const categoria = document.getElementById("selectCategoria2").value;
-        const opcionesSelect = document.getElementById("selectValor");
-
-        if (categoria) {
-            fetch("consultarOpciones.php?categoria=" + categoria)
+        /* considerando eliminar
+        function cargarOpcionesSelectBoxPie() {
+            const selectBoxPie = document.getElementById("selectbox-pie");
+    
+            fetch('consultarColumnas.php')
                 .then(response => response.json())
                 .then(data => {
                     // Limpiamos el segundo select
-                    opcionesSelect.innerHTML = '<option value=""></option>';
+                    selectBoxPie.innerHTML = '<option value=""></option>';
                     // Agregamos las nuevas opciones
                     data.forEach(item => {
                         const option = document.createElement("option");
-                        option.value = item;
-                        option.textContent = item;
-                        opcionesSelect.appendChild(option);
+                        option.value = item.COLUMN_NAME;
+                        option.textContent = item.COLUMN_NAME;
+                        selectBoxPie.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error:', error));
-        } else {
-            // Si no se selecciona nada, limpiamos el segundo select
-            opcionesSelect.innerHTML = '<option value="">Selecciona una opción</option>';
-        }
-    }
-    </script>
-
-    <script>
-        function exportarPDF() {
-            var grafica = document.getElementById('grafica');
-            
-            var opciones = {
-                margin:       0,
-                filename:     'grafica.pdf',
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 4 }, 
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            
-            html2pdf().from(grafica).set(opciones).save();
-        }
-    </script>
-
-    <!-- Pendiente: refactorizar codigo-->
-    <script>
-        document.getElementById("botonBarras").addEventListener("click", function() {
-            if (document.getElementById("radioCategorico").checked){
-                document.getElementById("selectCategoria1").style.display = "block";
-                document.getElementById("selectCategoria2").style.display = "none";
-                document.getElementById("selectValor").style.display = "none";
-            }
-            else if (document.getElementById("radioCategoricoCategorico").checked) {
-                document.getElementById("selectCategoria1").style.display = "block";
-                document.getElementById("selectCategoria2").style.display = "block";
-                document.getElementById("selectValor").style.display = "none";
-            }
-            else{
-                document.getElementById("selectCategoria1").style.display = "block";
-                document.getElementById("selectCategoria2").style.display = "block";
-                document.getElementById("selectValor").style.display = "block";
-            }
-            document.getElementById("grupoCategorico").style.display = "block";
-            document.getElementById("grupoCategoricoNumerico").style.display = "block";
-            document.getElementById("grupoCategoricoCategorico").style.display = "block";
-        });
-        document.getElementById("botonPie").addEventListener("click", function() {
-            document.getElementById("selectCategoria1").style.display = "block";
-            document.getElementById("selectCategoria2").style.display = "none";
-            document.getElementById("selectValor").style.display = "none";
-            document.getElementById("grupoCategorico").style.display = "none";
-            document.getElementById("grupoCategoricoNumerico").style.display = "none";
-            document.getElementById("grupoCategoricoCategorico").style.display = "none";
-        });
-        document.getElementById("radioCategoricoNumerico").addEventListener("change", function() {
-            document.getElementById("selectCategoria1").style.display = "block";
-            document.getElementById("selectCategoria2").style.display = "block";
-            document.getElementById("selectValor").style.display = "block";
-        });
-        document.getElementById("radioCategoricoCategorico").addEventListener("change", function() {
-            document.getElementById("selectCategoria1").style.display = "block";
-            document.getElementById("selectCategoria2").style.display = "block";
-            document.getElementById("selectValor").style.display = "none";
-        });
-    </script>
-
-    <script>
-        function graficarCategorico(tipoDeGraficaSeleccionada) {
-            // Obtener el valor seleccionado del select box
-            const columnaSeleccionada = document.getElementById('selectCategoria1').value;
-
-            // Enviar la solicitud fetch al archivo PHP
-            fetch('extraccionCategorico.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', 
-                },
-                body: new URLSearchParams({
-                    'columna': columnaSeleccionada
-                })
-            })
-            .then(response => response.json()) // `extraccion.php` devuelve JSON
-            .then(data => {
-                console.log(data); 
-                const datosLimpios = data.map(item => ({
-                    label: item.label,
-                    y: parseInt(item.y, 10)
-                }));
-                var grafica = new CanvasJS.Chart("grafica", {
-                        animationEnabled: true,
-                        theme: "light1", 
-                        title:{
-                            text: "Alumnos por " + columnaSeleccionada,
-                            fontFamily: "Lucida Console",
-                            fontSize: 20,
-                            fontWeight: "bold",
-                            margin: 40
-                        },
-                        data: [{        
-                            type: tipoDeGraficaSeleccionada, 
-                            indexLabel: "{label} {y}%",
-                            toolTipContent: "<b>{label}</b>: {y}%",
-                            dataPoints: datosLimpios
-                        }]
-                    });
-                    grafica.render();
-            })
             .catch(error => console.error('Error:', error));
         }
+        */
     </script>
-    
-    <script>
-        function graficarCategoricoNumerico(tipoDeGraficaSeleccionada){
 
-            const columnaCategoria = document.getElementById('selectCategoria1').value;
-            const columnaCategoriaParaValor = document.getElementById('selectCategoria2').value;
-            const columnaValor = document.getElementById('selectValor').value;
-
-            fetch('extraccionCategoricoNumerico.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'columnaCategoria': columnaCategoria,
-                    'columnaCategoriaParaValor': columnaCategoriaParaValor,
-                    'columnaValor': columnaValor
-                })
-            })
-            .then(response => response.json()) 
-            .then(data => {
-                console.log(data);
-                const datosLimpios = data.map(item => ({
-                    label: item.label,
-                    y: parseInt(item.y, 10)
-                }));
-                var graficaBarras = new CanvasJS.Chart("grafica", {
-                        animationEnabled: true,
-                        theme: "light1", 
-                        title:{
-                            text: "Alumnos " + columnaValor + " por " + columnaCategoria,
-                            fontFamily: "Lucida Console",
-                            fontSize: 20,
-                            fontWeight: "bold",
-                            margin: 40
-                        },
-                        data: [{        
-                            type: tipoDeGraficaSeleccionada, 
-                            dataPoints: datosLimpios,
-                        }]
-                    });
-                    graficaBarras.render();
-            })
-            .catch(error => console.error('Error:', error));
-
-        }
-    </script> 
-    
-    <script>
-        function graficarCategoricoCategorico(){
-
-            const columnaCategoria1 = document.getElementById('selectCategoria1').value;
-            const columnaCategoria2 = document.getElementById('selectCategoria2').value;
-
-            fetch('extraccionCategoricoCategorico.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', 
-                },
-                body: new URLSearchParams({
-                    'columnaCategoria1': columnaCategoria1,
-                    'columnaCategoria2': columnaCategoria2,
-                })
-            })
-            .then(response => response.json()) 
-            .then(data => {
-                console.log(data);
-                const datosLimpios = data.map(item => ({
-                    label: item.label,
-                    y: parseInt(item.y, 10)
-                }));
-                var graficaBarras = new CanvasJS.Chart("grafica", {
-                        animationEnabled: true,
-                        theme: "light1", 
-                        title:{
-                            text: "Alumnos por " + columnaCategoria1 + " y " + columnaCategoria2,
-                            fontFamily: "Lucida Console",
-                            fontSize: 20,
-                            fontWeight: "bold",
-                            margin: 40
-                        },
-                        data: [{        
-                            type: "bar", 
-                            dataPoints: datosLimpios,
-                        }]
-                    });
-                    graficaBarras.render();
-            })
-            .catch(error => console.error('Error:', error));
-
-        }
-    </script>
 </body>
 </html>

@@ -15,11 +15,8 @@ if ($conexion->connect_error) {
     die("Conexión fallida: " . $conexion->connect_error);
 }
 
-// Obtiene la columna seleccionada mediante POST
-$columna = isset($_POST['columna']) ? $_POST['columna'] : 'Edad';
-
 // Consulta para obtener datos de la columna seleccionada
-$consulta = "SELECT $columna as x, COUNT(*) AS y FROM info GROUP BY $columna ORDER BY $columna;";
+$consulta = "SELECT Padecimiento, COUNT(*) AS y FROM info GROUP BY Padecimiento;";
 $salida = $conexion->query($consulta);
 
 $datos = array();
