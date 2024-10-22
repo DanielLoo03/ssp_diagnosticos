@@ -1,6 +1,3 @@
-h1{
-
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin-bottom: 50px;
-
+.card-body {
+    position: relative; 
 }

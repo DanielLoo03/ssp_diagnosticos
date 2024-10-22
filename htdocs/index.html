@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prueba Tabler</title>
+    <link rel="stylesheet" href="style.css"> 
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/apexcharts/dist/apexcharts.min.js" defer></script>
@@ -34,18 +35,14 @@
                         <div class="col-6">
                             <div class="card">
                                 <div class="card-body" style="height: 20rem">
-                                    <div id="grafica-barras" class="chart-lg">
-                                        <p style="text-align: center; font-size: 15px;">Padecimientos de alumnos</p>
-                                    </div>
+                                    <div id="grafica-barras" class="chart-lg"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="card">
                                 <div class="card-body" style="height: 20rem">
-                                    <div id="grafica-pie" class="chart-lg">
-                                        <p id="titulo-grafica-pie" style="text-align: center; font-size: 15px;">Alumnos por Facultad</p>
-                                    </div>
+                                    <div id="grafica-pie" class="chart-lg"></div>
                                     <div class="form-group">
                                         <label for="selectbox-pie"></label>
                                         <select class="form-select" id="selectbox-pie">
@@ -64,7 +61,7 @@
                             <div class="card">
                                 <div class="card-body" style="height: 20rem">
                                     <div id="grafica-boxplot" class="chart-lg">
-                                        <p style="text-align: center; font-size: 15px;">Box Plot</p>
+                                        <p style="text-align: center; font-size: 15px;">Percentiles por categoría</p>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +70,16 @@
                             <div class="card">
                                 <div class="card-body" style="height: 20rem">
                                     <div id="grafica-tendencias" class="chart-lg">
-                                        <p style="text-align: center; font-size: 15px;">Line Chart</p>
+                                        <p style="text-align: center; font-size: 15px;">Alumnos por edad</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="height: 20rem">
+                                    <div id="" class="chart-lg">
+                                        <p style="text-align: center; font-size: 15px;"></p>
                                     </div>
                                 </div>
                             </div>
@@ -89,7 +95,7 @@
         // Graficas predeterminadas
         // Grafica de barras predeterminada (no parametrizable)
         document.addEventListener("DOMContentLoaded", function() {
-        window.ApexCharts && fetch('consultasEstaticas.php')
+        window.ApexCharts && fetch('scripts-php/consultasEstaticas.php')
             .then(response => response.json())
             .then(datos => {
                 const datosLimpios = datos.map(item => ({
@@ -101,7 +107,7 @@
                         type: "bar",
                         fontFamily: 'inherit',
                         width: 450,
-                        height: 225,
+                        height: 250,
                         parentHeightOffset: 0,
                         toolbar: {
                             show: false,
@@ -110,6 +116,53 @@
                             enabled: true
                         },
                         stacked: true,
+                        toolbar: {
+                            show: true,
+                            offsetX: 0,
+                            offsetY: 0,
+                            tools: {
+                            download: true,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true | '<img src="/static/icons/reset.png" width="20">',
+                            customIcons: []
+                            },
+                            export: {
+                            csv: {
+                                filename: undefined,
+                                columnDelimiter: ',',
+                                headerCategory: 'category',
+                                headerValue: 'value',
+                                categoryFormatter(x) {
+                                return new Date(x).toDateString()
+                                },
+                                valueFormatter(y) {
+                                return y
+                                }
+                            },
+                            svg: {
+                                filename: undefined,
+                            },
+                            png: {
+                                filename: undefined,
+                            }
+                            },
+                            autoSelected: 'zoom' 
+                        },
+                    },
+                    title: {
+                        text: 'Padecimientos de alumnos',
+                        align: 'center', // Puede ser 'left', 'center', 'right'
+                        margin: 20, // Margen alrededor del título
+                        style: {
+                            fontSize: '15px', // Tamaño de la fuente
+                            fontWeight: 'normal', // Peso de la fuente
+                            fontFamily: 'Segoe UI, sans-serif', // Tipo de fuente
+                            color: '#333' // Color del texto
+                        }
                     },
                     plotOptions: {
                         bar: {
@@ -179,7 +232,7 @@
             function graficarPie(categoria){
 
                 // Enviar la solicitud fetch al archivo PHP
-                fetch('extraccionCategorico.php', {
+                fetch('scripts-php/extraccionCategorico.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded', 
@@ -190,8 +243,6 @@
                 })
                 .then(response => response.json()) // `extraccion.php` devuelve JSON
                 .then(data => {
-                    console.log(data);
-
                     // Extraer etiquetas y series
                     const etiquetas = data.map(item => String(item.x)); // Asumiendo que `item.x` es la etiqueta
                     const frecuencias = data.map(item => parseInt(item.y, 10)); // Asumiendo que `item.y` es la frecuencia
@@ -199,8 +250,20 @@
                     var opciones = {
                         chart: {
                             type: "pie", // Debe ser 'pie' o 'donut' para gráficos de pastel
+                            offsetY: 20,
                             width: 450,
                             height: 225
+                        },
+                        title: {
+                            text: 'Alumnos por ' + categoria,
+                            align: 'center', // Puede ser 'left', 'center', 'right'
+                            margin: 0, // Margen alrededor del título
+                            style: {
+                                fontSize: '15px', // Tamaño de la fuente
+                                fontWeight: 'normal', // Peso de la fuente
+                                fontFamily: 'Segoe UI, sans-serif', // Tipo de fuente
+                                color: '#333' // Color del texto
+                            }
                         },
                         labels: etiquetas, // Etiquetas del gráfico
                         series: frecuencias, // Frecuencias del gráfico
@@ -222,6 +285,91 @@
                 //document.getElementById("titulo-grafica-pie").textContent = "Alumnos por " + categoriaSeleccionada;
                 graficarPie(categoriaSeleccionada)
             });
+
+            //Grafica de boxplot predeterminada (no parametrizable)
+            let graficaBoxplot;
+            function graficarBoxplot(){
+
+                // Enviar la solicitud fetch al archivo PHP
+                fetch('scripts-php/consultaBoxplot.php')
+                .then(response => response.json()) // `consultaBoxplot.php` devuelve JSON
+                .then(data => {
+                    // Extraer los cinco valores en un solo array
+                    const boxplotData = data.map(item => parseInt(item.y, 10)); // Suponiendo que `item.y` es el valor
+
+                    // Asegúrate de que tienes cinco valores
+                    if (boxplotData.length !== 5) {
+                        console.error('Se esperaban 5 valores para el boxplot.');
+                        return;
+                    }
+
+                    var opciones = {
+                        chart: {
+                            type: "boxPlot",
+                            width: 300,
+                            height: 225
+                        },
+                        series: [{
+                            name: 'Boxplot',
+                            data: [{
+                                x: 'Edad', // Puedes cambiar la etiqueta si es necesario
+                                y: boxplotData // Array de cinco valores: [mínimo, percentil 25, mediana, percentil 75, máximo]
+                            }]
+                        }],
+                        tooltip: {
+                            shared: true,
+                            intersect: false
+                        }
+                    };
+
+                    graficaBoxplot = new ApexCharts(document.querySelector("#grafica-boxplot"), opciones);
+                    graficaBoxplot.render();
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+            }
+            graficarBoxplot();
+
+            //Grafica de tendencias pretedeterminada (parametrizable)
+            let graficaTendencias;
+            function graficarTendencias(categoria) {
+                // Enviar la solicitud fetch al archivo PHP
+                fetch('scripts-php/consultaTendencias.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', 
+                    },
+                    body: new URLSearchParams({
+                        'columna': categoria
+                    })
+                })
+                .then(response => response.json()) // `consultaTendencias.php` devuelve JSON
+                .then(data => {
+                    // Extraer etiquetas y series
+                    const etiquetas = data.map(item => String(item.x)); // Asumiendo que `item.x` es la etiqueta
+                    const frecuencias = data.map(item => parseInt(item.y, 10)); // Asumiendo que `item.y` es la frecuencia
+
+                    var opciones = {
+                        chart: {
+                            type: "line", 
+                            width: 700,
+                            height: 225
+                        },
+                        series: [{
+                            name: categoria, // Puedes usar el nombre de la categoría aquí
+                            data: frecuencias // Los datos de la serie
+                        }],
+                        xaxis: {
+                            categories: etiquetas // Las etiquetas del eje X
+                        },
+                    };
+
+                    graficaTendencias = new ApexCharts(document.querySelector("#grafica-tendencias"), opciones);
+                    graficaTendencias.render();
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+            }
+
+            graficarTendencias("Edad");
 
         });
     </script>
