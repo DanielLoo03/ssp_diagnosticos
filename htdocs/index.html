@@ -95,7 +95,7 @@
         // Graficas predeterminadas
         // Grafica de barras predeterminada (no parametrizable)
         document.addEventListener("DOMContentLoaded", function() {
-        window.ApexCharts && fetch('scripts-php/consultasEstaticas.php')
+        window.ApexCharts && fetch('scripts-php/consultaBarras.php')
             .then(response => response.json())
             .then(datos => {
                 const datosLimpios = datos.map(item => ({
@@ -232,7 +232,7 @@
             function graficarPie(categoria){
 
                 // Enviar la solicitud fetch al archivo PHP
-                fetch('scripts-php/extraccionCategorico.php', {
+                fetch('scripts-php/consultaPie.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded', 
@@ -252,7 +252,43 @@
                             type: "pie", // Debe ser 'pie' o 'donut' para gráficos de pastel
                             offsetY: 20,
                             width: 450,
-                            height: 225
+                            height: 225,
+                            toolbar: {
+                                show: true,
+                                offsetX: 0,
+                                offsetY: 0,
+                                tools: {
+                                download: true,
+                                selection: true,
+                                zoom: true,
+                                zoomin: true,
+                                zoomout: true,
+                                pan: true,
+                                reset: true | '<img src="/static/icons/reset.png" width="20">',
+                                customIcons: []
+                                },
+                                export: {
+                                csv: {
+                                    filename: undefined,
+                                    columnDelimiter: ',',
+                                    headerCategory: 'category',
+                                    headerValue: 'value',
+                                    categoryFormatter(x) {
+                                    return new Date(x).toDateString()
+                                    },
+                                    valueFormatter(y) {
+                                    return y
+                                    }
+                                },
+                                svg: {
+                                    filename: undefined,
+                                },
+                                png: {
+                                    filename: undefined,
+                                }
+                                },
+                                autoSelected: 'zoom' 
+                            },
                         },
                         title: {
                             text: 'Alumnos por ' + categoria,
@@ -372,30 +408,6 @@
             graficarTendencias("Edad");
 
         });
-    </script>
-        
-    <!-- Otras funciones -->    
-    <script>
-        /* considerando eliminar
-        function cargarOpcionesSelectBoxPie() {
-            const selectBoxPie = document.getElementById("selectbox-pie");
-    
-            fetch('consultarColumnas.php')
-                .then(response => response.json())
-                .then(data => {
-                    // Limpiamos el segundo select
-                    selectBoxPie.innerHTML = '<option value=""></option>';
-                    // Agregamos las nuevas opciones
-                    data.forEach(item => {
-                        const option = document.createElement("option");
-                        option.value = item.COLUMN_NAME;
-                        option.textContent = item.COLUMN_NAME;
-                        selectBoxPie.appendChild(option);
-                    });
-                })
-            .catch(error => console.error('Error:', error));
-        }
-        */
     </script>
 
 </body>

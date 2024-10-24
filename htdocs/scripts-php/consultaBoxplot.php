@@ -16,7 +16,7 @@ if ($conexion->connect_error) {
 }
 
 // Consulta para obtener datos de la columna seleccionada
-$consulta = "SELECT MIN(Edad) AS y FROM info UNION ALL SELECT Edad FROM ( SELECT Edad, @rownum := @rownum + 1 AS row_number, @total := @total + 1 FROM info, (SELECT @rownum := 0, @total := 0) r ORDER BY Edad ) AS ranked WHERE row_number = FLOOR(0.25 * @total) OR row_number = FLOOR(0.50 * @total) OR row_number = FLOOR(0.75 * @total) UNION ALL SELECT MAX(Edad) AS y FROM info;";
+$consulta = "CALL ConsultaBoxplot();";
 $salida = $conexion->query($consulta);
 
 $datos = array();

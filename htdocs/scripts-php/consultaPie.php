@@ -16,13 +16,10 @@ if ($conexion->connect_error) {
 }
 
 // Obtiene la columna seleccionada mediante POST
-$columna = isset($_POST['columna']) ? $_POST['columna'] : 'Institución';
-
-// Escapa la columna para evitar inyecciones SQL
-$columna = mysqli_real_escape_string($conexion, $columna);
+$columna = isset($_POST['columna']) ? $_POST['columna'] : 'Edad';
 
 // Consulta para obtener datos de la columna seleccionada
-$consulta = "SET @categoria = '$columna'; CALL ConsultaTendencias(@categoria);";
+$consulta = "SET @categoria = '" . mysqli_real_escape_string($conexion, $columna) . "'; CALL ConsultaPie(@categoria);";
 
 // Ejecuta la consulta
 if (mysqli_multi_query($conexion, $consulta)) {

@@ -16,7 +16,7 @@ if ($conexion->connect_error) {
 }
 
 // Consulta para obtener datos de la columna seleccionada
-$consulta = "SELECT Padecimiento, COUNT(*) AS y FROM info GROUP BY Padecimiento;";
+$consulta = "CALL ConsultaBarras();";
 $salida = $conexion->query($consulta);
 
 $datos = array();

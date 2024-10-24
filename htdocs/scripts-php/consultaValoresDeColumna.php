@@ -16,7 +16,7 @@ if ($conexion->connect_error) {
 $categoria = $_GET['categoria'];
 
 // Definir la consulta SQL según la categoría seleccionada
-$consulta = "SELECT DISTINCT " . $categoria . " FROM info";
+$consulta = "SET @categoria = $categoria; CALL ConsultaValoresDeColumna(@categoria)";
 
 // Ejecutar la consulta y construir el resultado en JSON
 $resultado = $conexion->query($consulta);
