@@ -131,51 +131,46 @@
           <div class="tab-content">
             <div class="tab-pane active" id="user-timeline">
               <div class="tile user-settings">
-                <h4 class="line-head">Alumnos por género</h4>
+                <h4 class="line-head">Alumnos por edad</h4>
                 <div class="table-responsive">
            
             <?php
 include "../../../config/conexion.php";
  $con->set_charset("utf8mb4");
 
-$query_cuantos_hombres = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'H'";
-$query_cuantas_mujeres = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'M'";
-$query_cuantos_prefiero_no_decir = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'Prefiero no decir'";
+// Consulta para obtener frecuencia de alumnos por institución
+$query_alumnos_por_edad = "SELECT d4 as edad, COUNT(*) AS frecuencia FROM datosGenerales GROUP BY edad;";
 
-$result_cuantos_hombres = mysqli_query($con, $query_cuantos_hombres);
-if (!$result_cuantos_hombres) {
+$result_alumnos_por_edad = mysqli_query($con, $query_alumnos_por_edad);
+if (!$result_alumnos_por_edad) {
     die("Error en la consulta alumnos por institución: " . mysqli_error($con));
 }
 
-$result_cuantas_mujeres = mysqli_query($con, $query_cuantas_mujeres);
-if (!$result_cuantas_mujeres) {
-    die("Error en la consulta alumnos por institución: " . mysqli_error($con));
+$edades = array();
+$frecuencias = array();
+while ($registro = mysqli_fetch_assoc($result_alumnos_por_edad)) {
+  $edades[] = $registro['edad'];
+  $frecuencias[] = $registro['frecuencia'];  
 }
 
-$result_cuantos_prefiero_no_decir = mysqli_query($con, $query_cuantos_prefiero_no_decir);
-if (!$result_cuantos_prefiero_no_decir) {
-    die("Error en la consulta alumnos por institución: " . mysqli_error($con));
-}
+$edades_json = json_encode($edades);
+$frecuencias_json = json_encode($frecuencias);
 
-$count_cuantos_hombres = mysqli_fetch_assoc($result_cuantos_hombres)['count'];
-$count_cuantas_mujeres = mysqli_fetch_assoc($result_cuantas_mujeres)['count'];
-$count_cuantos_prefiero_no_decir = mysqli_fetch_assoc($result_cuantos_prefiero_no_decir)['count'];
 ?>
           
-<div id="alumnosPorGeneroChart"></div>
+<div id="alumnosPorEdadChart"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     try {
-      var countCuantosHombres = <?php echo $count_cuantos_hombres; ?>;
-      var countCuantasMujeres = <?php echo $count_cuantas_mujeres; ?>;
-      var countCuantosPrefieroNoDecir = <?php echo $count_cuantos_prefiero_no_decir; ?>;
+      var edades = <?php echo $edades_json; ?>;
+      var frecuencias = <?php echo $frecuencias_json; ?>;
 
-      let grafica = new ApexCharts(document.getElementById('alumnosPorGeneroChart'), {
+      let grafica = new ApexCharts(document.getElementById('alumnosPorEdadChart'), {
           chart: {
-              type: "pie",
-              width: 600,
-              height: 250,
+              type: "bar",
+              width: 700,
+              height: 300,
               parentHeightOffset: 0,
               toolbar: {
                   show: true,
@@ -191,10 +186,8 @@ $count_cuantos_prefiero_no_decir = mysqli_fetch_assoc($result_cuantos_prefiero_n
               }
           },
           plotOptions: {
-              pie: {
-                  donut: {
-                      size: '50%'
-                  }
+              bar: {
+                  barHeight: '50%',
               }
           },
           dataLabels: {
@@ -203,8 +196,10 @@ $count_cuantos_prefiero_no_decir = mysqli_fetch_assoc($result_cuantos_prefiero_n
           fill: {
               opacity: 1
           },
-          series: [countCuantosHombres, countCuantasMujeres, countCuantosPrefieroNoDecir],
-          labels: ['Hombres', 'Mujeres', 'Prefiero no decir'],
+          series: [{
+              name: 'Frecuencias',
+              data: frecuencias
+          }],
           tooltip: {
               theme: 'dark'
           },
@@ -216,6 +211,15 @@ $count_cuantos_prefiero_no_decir = mysqli_fetch_assoc($result_cuantos_prefiero_n
                   bottom: -4
               },
               strokeDashArray: 4
+          },
+          xaxis: {
+              type: 'category',
+              categories: edades
+          },
+          yaxis: {
+              labels: {
+                  padding: 4
+              }
           },
           legend: {
               show: true,

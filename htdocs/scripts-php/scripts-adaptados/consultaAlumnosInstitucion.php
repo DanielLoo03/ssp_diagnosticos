@@ -172,7 +172,7 @@ $frecuencias_json = json_encode($frecuencias);
       let grafica = new ApexCharts(document.getElementById('alumnosPorInstitucionChart'), {
           chart: {
               type: "bar",
-              width: 450,
+              width: 600,
               height: 250,
               parentHeightOffset: 0,
               toolbar: {
