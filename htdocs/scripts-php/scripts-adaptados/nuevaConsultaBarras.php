@@ -20,7 +20,7 @@
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/apexcharts/dist/apexcharts.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     
     <meta name="description" content="Vali is a responsive and free admin theme built with Bootstrap 5, SASS and PUG.js. It's fully customizable and modular.">
     <!-- Twitter meta-->
@@ -131,7 +131,7 @@
           <div class="tab-content">
             <div class="tab-pane active" id="user-timeline">
               <div class="tile user-settings">
-                <h4 class="line-head">Alumnos con Espectro Autista</h4>
+                <h4 class="line-head">Alumnos por institución</h4>
                 <div class="table-responsive">
            
             <?php
@@ -149,7 +149,7 @@ if (!$result_alumnos_por_institucion) {
 $instituciones = array();
 $frecuencias = array();
 while ($registro = mysqli_fetch_assoc($result_alumnos_por_institucion)) {
-  $instituciones = $registro['institucion'];
+  $instituciones[] = $registro['institucion'];
   $frecuencias[] = $registro['frecuencia'];  
 }
 
@@ -161,139 +161,102 @@ $frecuencias_json = json_encode($frecuencias);
 //$instituciones_alumnos_por_institucion = mysqli_fetch_assoc($result_alumnos_por_institucion)['institucion'];
 ?>
           
-<canvas id="alumnosPorInstitucionChart"></canvas>
+<div id="alumnosPorInstitucionChart"></div>
 
 <script>
-    // Obt��n los datos de PHP y convi��rtelos a valores num��ricos para usar en la gr��fica
-    var instituciones = <?php echo $instituciones_json; ?>;
-    var frecuencias = <?php echo $frecuencias_json; ?>;
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      var instituciones = <?php echo $instituciones_json; ?>;
+      var frecuencias = <?php echo $frecuencias_json; ?>;
 
-
-    // Configuraci��n de la gr��fica
-    let grafica = new ApexCharts(document.getElementById('alumnosPorInstitucionChart'), {
-        chart: {
-            type: "bar",
-            fontFamily: 'inherit',
-            width: 450,
-            height: 250,
-            parentHeightOffset: 0,
-            toolbar: {
-                show: false,
-            },
-            animations: {
-                enabled: true
-            },
-            stacked: true,
-            toolbar: {
-                show: true,
-                offsetX: 0,
-                offsetY: 0,
-                tools: {
-                download: true,
-                selection: true,
-                zoom: true,
-                zoomin: true,
-                zoomout: true,
-                pan: true,
-                reset: true | '<img src="/static/icons/reset.png" width="20">',
-                customIcons: []
-                },
-                export: {
-                csv: {
-                    filename: undefined,
-                    columnDelimiter: ',',
-                    headerCategory: 'category',
-                    headerValue: 'value',
-                    categoryFormatter(x) {
-                    return new Date(x).toDateString()
-                    },
-                    valueFormatter(y) {
-                    return y
-                    }
-                },
-                svg: {
-                    filename: undefined,
-                },
-                png: {
-                    filename: undefined,
-                }
-                },
-                autoSelected: 'zoom' 
-            },
-        },
-        title: {
-            text: 'Alumnos por institución',
-            align: 'center', 
-            margin: 20, 
-            style: {
-                fontSize: '15px', 
-                fontWeight: 'normal', 
-                fontFamily: 'Segoe UI, sans-serif', 
-                color: '#333'
-            }
-        },
-        plotOptions: {
-            bar: {
-                barHeight: '50%',
-                horizontal: true,
-                
-            }
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        fill: {
-            opacity: 1,
-        },
-        series: [{
-            name: 'Frecuencias',
-            data: frecuencias
-        }],
-        tooltip: {
-            theme: 'dark'
-        },
-        grid: {
-            padding: {
-                top: 10,
-                right: 0,
-                left: 10,
-                bottom: -4
-            },
-            strokeDashArray: 4,
-        },
-        xaxis: {
-            type: 'category',
-            categories: instituciones
-        },
-        yaxis: {
-            labels: {
-                padding: 4
-            },
-        },
-        colors: [
-            tabler.getColor("purple"),
-            tabler.getColor("green"),
-            tabler.getColor("yellow"),
-            tabler.getColor("red"),
-            tabler.getColor("primary")
-        ],
-        legend: {
-            show: true,
-            position: 'bottom',
-            offsetY: 12,
-            markers: {
-                width: 10,
-                height: 10,
-                radius: 100,
-            },
-            itemMargin: {
-                horizontal: 8,
-                vertical: 8
-            },
-        },
-    });
-    graficaBarras.render();
-.catch(error => console.error('Error:', error));
+      let grafica = new ApexCharts(document.getElementById('alumnosPorInstitucionChart'), {
+          chart: {
+              type: "bar",
+              width: 450,
+              height: 250,
+              parentHeightOffset: 0,
+              toolbar: {
+                  show: true,
+                  tools: {
+                      download: true,
+                      selection: true,
+                      zoom: true,
+                      zoomin: true,
+                      zoomout: true,
+                      pan: true,
+                      reset: true
+                  }
+              }
+          },
+          title: {
+              text: 'Alumnos por institución',
+              align: 'center',
+              margin: 20,
+              style: {
+                  fontSize: '15px',
+                  fontWeight: 'normal',
+                  fontFamily: 'Segoe UI, sans-serif',
+                  color: '#333'
+              }
+          },
+          plotOptions: {
+              bar: {
+                  barHeight: '50%',
+                  horizontal: true
+              }
+          },
+          dataLabels: {
+              enabled: false
+          },
+          fill: {
+              opacity: 1
+          },
+          series: [{
+              name: 'Frecuencias',
+              data: frecuencias
+          }],
+          tooltip: {
+              theme: 'dark'
+          },
+          grid: {
+              padding: {
+                  top: 10,
+                  right: 0,
+                  left: 10,
+                  bottom: -4
+              },
+              strokeDashArray: 4
+          },
+          xaxis: {
+              type: 'category',
+              categories: instituciones
+          },
+          yaxis: {
+              labels: {
+                  padding: 4
+              }
+          },
+          legend: {
+              show: true,
+              position: 'bottom',
+              offsetY: 12,
+              markers: {
+                  width: 10,
+                  height: 10,
+                  radius: 100
+              },
+              itemMargin: {
+                  horizontal: 8,
+                  vertical: 8
+              }
+          }
+      });
+      grafica.render();
+    } 
+    catch (error) {
+      console.error('Error:', error);
+    }
+  });
 </script>
     
 
