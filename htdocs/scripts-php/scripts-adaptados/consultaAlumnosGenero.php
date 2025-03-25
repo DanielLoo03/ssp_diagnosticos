@@ -131,47 +131,49 @@
           <div class="tab-content">
             <div class="tab-pane active" id="user-timeline">
               <div class="tile user-settings">
-                <h4 class="line-head">Alumnos por institución</h4>
+                <h4 class="line-head">Alumnos por género</h4>
                 <div class="table-responsive">
            
             <?php
 include "../../../config/conexion.php";
  $con->set_charset("utf8mb4");
 
-// Consulta para obtener frecuencia de alumnos por institución
-$query_alumnos_por_institucion = "SELECT institucion, COUNT(*) AS frecuencia FROM alumno GROUP BY institucion;";
+$query_cuantos_hombres = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'H'";
+$query_cuantas_mujeres = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'M'";
+$query_cuantos_prefiero_no_decir = "SELECT COUNT(*) as count FROM datosGenerales WHERE d5 = 'Prefiero no decir'";
 
-$result_alumnos_por_institucion = mysqli_query($con, $query_alumnos_por_institucion);
-if (!$result_alumnos_por_institucion) {
+$result_cuantos_hombres = mysqli_query($con, $query_cuantos_hombres);
+if (!$result_cuantos_hombres) {
     die("Error en la consulta alumnos por institución: " . mysqli_error($con));
 }
 
-$instituciones = array();
-$frecuencias = array();
-while ($registro = mysqli_fetch_assoc($result_alumnos_por_institucion)) {
-  $instituciones[] = $registro['institucion'];
-  $frecuencias[] = $registro['frecuencia'];  
+$result_cuantas_mujeres = mysqli_query($con, $query_cuantas_mujeres);
+if (!$result_cuantas_mujeres) {
+    die("Error en la consulta alumnos por institución: " . mysqli_error($con));
 }
 
-$instituciones_json = json_encode($instituciones);
-$frecuencias_json = json_encode($frecuencias);
+$result_cuantos_prefiero_no_decir = mysqli_query($con, $query_cuantos_prefiero_no_decir);
+if (!$result_cuantos_prefiero_no_decir) {
+    die("Error en la consulta alumnos por institución: " . mysqli_error($con));
+}
 
-
-//$frecuencia_alumnos_por_institucion = mysqli_fetch_assoc($result_alumnos_por_institucion)['frecuencia'];
-//$instituciones_alumnos_por_institucion = mysqli_fetch_assoc($result_alumnos_por_institucion)['institucion'];
+$count_cuantos_hombres = mysqli_fetch_assoc($result_cuantos_hombres)['count'];
+$count_cuantas_mujeres = mysqli_fetch_assoc($result_cuantas_mujeres)['count'];
+$count_cuantos_prefiero_no_decir = mysqli_fetch_assoc($result_cuantos_prefiero_no_decir)['count'];
 ?>
           
-<div id="alumnosPorInstitucionChart"></div>
+<div id="alumnosPorGeneroChart"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     try {
-      var instituciones = <?php echo $instituciones_json; ?>;
-      var frecuencias = <?php echo $frecuencias_json; ?>;
+      var countCuantosHombres = <?php echo $count_cuantos_hombres; ?>;
+      var countCuantasMujeres = <?php echo $count_cuantas_mujeres; ?>;
+      var countCuantosPrefieroNoDecir = <?php echo $count_cuantos_prefiero_no_decir; ?>;
 
-      let grafica = new ApexCharts(document.getElementById('alumnosPorInstitucionChart'), {
+      let grafica = new ApexCharts(document.getElementById('alumnosPorGeneroChart'), {
           chart: {
-              type: "bar",
+              type: "pie",
               width: 450,
               height: 250,
               parentHeightOffset: 0,
@@ -188,21 +190,11 @@ $frecuencias_json = json_encode($frecuencias);
                   }
               }
           },
-          title: {
-              text: 'Alumnos por institución',
-              align: 'center',
-              margin: 20,
-              style: {
-                  fontSize: '15px',
-                  fontWeight: 'normal',
-                  fontFamily: 'Segoe UI, sans-serif',
-                  color: '#333'
-              }
-          },
           plotOptions: {
-              bar: {
-                  barHeight: '50%',
-                  horizontal: true
+              pie: {
+                  donut: {
+                      size: '50%'
+                  }
               }
           },
           dataLabels: {
@@ -211,10 +203,8 @@ $frecuencias_json = json_encode($frecuencias);
           fill: {
               opacity: 1
           },
-          series: [{
-              name: 'Frecuencias',
-              data: frecuencias
-          }],
+          series: [countCuantosHombres, countCuantasMujeres, countCuantosPrefieroNoDecir],
+          labels: ['Hombres', 'Mujeres', 'Prefiero no decir'],
           tooltip: {
               theme: 'dark'
           },
@@ -226,15 +216,6 @@ $frecuencias_json = json_encode($frecuencias);
                   bottom: -4
               },
               strokeDashArray: 4
-          },
-          xaxis: {
-              type: 'category',
-              categories: instituciones
-          },
-          yaxis: {
-              labels: {
-                  padding: 4
-              }
           },
           legend: {
               show: true,
